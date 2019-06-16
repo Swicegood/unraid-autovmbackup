@@ -137,9 +137,9 @@ backup_location="/mnt/user/VMs_Autobackup"
 # vm that doesnt exist on system"
 
 vms_to_backup="
-Mojave
 Kubuntu_1
 Windows 10 Pro
+Proxmox
 "
 
 
@@ -1072,20 +1072,38 @@ start_vm_after_failure="1"
 
                     echo "$vm was not running to begin with, so not restarting."
 
+                    echo "Adding $disk to list of files to transfer to server"
 
+                    ARRAY_OF_VDISKS+=("$disk")
 
 
 
                 fi
 
 
-            else
 
-                echo "Adding $disk to list of files to transfer to server"
-
-                ARRAY_OF_VDISKS+=("$disk")
 
 			fi
+
+
+			else
+
+
+			if [ "$vm_beginning_state" == "running" ]; then
+
+                 echo "Adding $backup_location/$vm/$timestamp$new_disk to list of files to transfer to server"
+
+                  ARRAY_OF_VDISKS+=("/$vm/$timestamp$new_disk")
+
+            else
+
+                 echo "Adding $disk to list of files to transfer to server"
+
+                 ARRAY_OF_VDISKS+=("$disk")
+
+            fi
+
+
 
 
 		else
@@ -1118,6 +1136,7 @@ start_vm_after_failure="1"
                                 ARRAY_OF_VDISKS+=("/$vm/$timestamp$new_disk")
 
 
+
                 else
 
                     echo "Start VM after failure was set to ON, but $vm was not running to begin with so not restarting."
@@ -1127,6 +1146,7 @@ start_vm_after_failure="1"
                     echo "Adding $disk to list of files to transfer to server"
 
                     ARRAY_OF_VDISKS+=("$disk")
+
 
 
                 fi
@@ -1148,7 +1168,7 @@ start_vm_after_failure="1"
 
     #start backup to main server
 
-          for vdisk  in ARRAY_OF_VDISKS;
+          for vdisk  in "${ARRAY_OF_VDISKS[@]}"
 
           do
 
