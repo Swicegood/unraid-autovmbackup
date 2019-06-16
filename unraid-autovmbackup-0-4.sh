@@ -682,7 +682,7 @@ start_vm_after_failure="1"
 
                         if [ "$vm" == "Mojave" ]; then
 
-             #                  ssh -n -f jaga@192.168.0.233 "sh -c './shutdown.sh > /dev/null 2>&1'"
+                               ssh -n -f jaga@192.168.0.233 "sh -c './shutdown.sh > /dev/null 2>&1'"
                         fi
 			echo "information: performing $clean_shutdown_checks $seconds_to_wait second cycles waiting for $vm to shutdown cleanly"
 
