@@ -1075,26 +1075,15 @@ start_vm_after_failure="1"
 
                 # add vdisk to list to transfer to main server (cs)
 
-                                echo "Adding $backup_location/$vm/$timestamp$new_disk to list of files to transfer to server"
-
-                                ARRAY_OF_VDISKS+=("/$vm/$timestamp$new_disk")
-
 
                 else
 
 
                     echo "$vm was not running to begin with, so not restarting."
 
-                    echo "Adding $disk to list of files to transfer to server"
-
-                    ARRAY_OF_VDISKS+=("$disk")
-
 
 
                 fi
-
-
-            else
 
 
 
@@ -1131,22 +1120,6 @@ start_vm_after_failure="1"
 				# try and start the vm.
 
                                	virsh start "$vm"
-
-                               	echo "Adding $backup_location/$vm/$timestamp$new_disk to list of files to transfer to server"
-
-                                ARRAY_OF_VDISKS+=("/$vm/$timestamp$new_disk")
-
-
-
-                else
-
-                    echo "Start VM after failure was set to ON, but $vm was not running to begin with so not restarting."
-
-                    #add backup location to list of vdisks to sync to the main sever (cs)
-
-                    echo "Adding $disk to list of files to transfer to server"
-
-                    ARRAY_OF_VDISKS+=("$disk")
 
 
 
