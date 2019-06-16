@@ -138,6 +138,7 @@ backup_location="/mnt/user/VMs_Autobackup"
 
 vms_to_backup="
 Kubuntu_1
+Windows 10
 Windows 10 Pro
 Proxmox
 "
@@ -994,7 +995,7 @@ start_vm_after_failure="1"
 
 
 
-                        if test `find "${disk/user/disk1}" -mtime +30`
+                        if test `find "${disk/user/cache}" -mtime +30`
                           then
 
                             echo "$disk old enough"
