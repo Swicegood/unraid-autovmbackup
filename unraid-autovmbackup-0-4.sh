@@ -145,7 +145,7 @@ Windows 10 Pro
 
 # default is 0 but set this to 1 if you would like to actually copy and backup files.
 
-actually_copy_files="1"
+actually_copy_files="0"
 
 
 # default is 0 but set this to 1 if you would like to add a timestamp to the backed up files.
@@ -529,6 +529,9 @@ start_vm_after_failure="1"
 
 	IFS=$'\n'
 
+    #create an array to keep paths of files for transfer to main server after main backup
+
+    ARRAY_OF_VDISKS=()
 
 	# loop through the vms in the list and try and back up thier associated xml configurations and vdisk(s).
 
@@ -679,7 +682,7 @@ start_vm_after_failure="1"
 
                         if [ "$vm" == "Mojave" ]; then
 
-                               ssh -n -f jaga@192.168.0.233 "sh -c './shutdown.sh > /dev/null 2>&1'"
+             #                  ssh -n -f jaga@192.168.0.233 "sh -c './shutdown.sh > /dev/null 2>&1'"
                         fi
 			echo "information: performing $clean_shutdown_checks $seconds_to_wait second cycles waiting for $vm to shutdown cleanly"
 
@@ -977,13 +980,36 @@ start_vm_after_failure="1"
 					 esac
 
 
+
+
 					echo "action: actually_copy_files is $actually_copy_files."
+
+
 
 
 					# copy or pretend to copy the vdisk to the backup location specified by the user.
 
 
 			        	rsync -av$rsync_dry_run_option "$disk" "$backup_location/$vm/$timestamp$new_disk"
+
+
+
+                        if test `find "${disk/user/disk1}" -mtime +30`
+                          then
+
+                            echo "$disk old enough"
+
+                            echo "Moving $disk to ${disk/user/disk1}"
+
+                            # move vdisk to array if it has not been used in a month
+
+                            rsync -av$rsync_dry_run_option --remove-source-files "$disk" "${disk/user/disk1}"
+
+
+                        fi
+
+
+
 
 
 					# send a message to the user based on whether there was an actual copy or a dry-run.
@@ -1034,6 +1060,11 @@ start_vm_after_failure="1"
 
                                 virsh domif-setlink "$vm" vnet0 up
 
+                # add vdisk to list to transfer to main server (cs)
+
+                                echo "Adding $backup_location/$vm/$timestamp$new_disk to list of files to transfer to server"
+
+                                ARRAY_OF_VDISKS+=("/$vm/$timestamp$new_disk")
 
 
                 else
@@ -1042,9 +1073,17 @@ start_vm_after_failure="1"
                     echo "$vm was not running to begin with, so not restarting."
 
 
+
+
+
                 fi
 
 
+            else
+
+                echo "Adding $disk to list of files to transfer to server"
+
+                ARRAY_OF_VDISKS+=("$disk")
 
 			fi
 
@@ -1074,9 +1113,21 @@ start_vm_after_failure="1"
 
                                	virsh start "$vm"
 
+                               	echo "Adding $backup_location/$vm/$timestamp$new_disk to list of files to transfer to server"
+
+                                ARRAY_OF_VDISKS+=("/$vm/$timestamp$new_disk")
+
+
                 else
 
                     echo "Start VM after failure was set to ON, but $vm was not running to begin with so not restarting."
+
+                    #add backup location to list of vdisks to sync to the main sever (cs)
+
+                    echo "Adding $disk to list of files to transfer to server"
+
+                    ARRAY_OF_VDISKS+=("$disk")
+
 
                 fi
 
@@ -1094,6 +1145,18 @@ start_vm_after_failure="1"
 
 	echo "information: finished attempt to backup "$vms_to_backup" to $backup_location."
 
+
+    #start backup to main server
+
+          for vdisk  in ARRAY_OF_VDISKS;
+
+          do
+
+          echo "Backing up $vdisk to main server"
+
+          rsync -av$rsync_dry_run_option --remove-source-files $vdisk root@cs:/mnt/user/Backup_for_campus_comps/VMStore/QEMU
+
+          done
 
 	exit 0
 
