@@ -141,6 +141,13 @@ Kubuntu_1
 Windows 10
 Windows 10 Pro
 Proxmox
+Windows 7
+Windows 8.1
+Sierra
+pfSense
+Libre Elec Custom
+FreeNAS
+Freepbx
 "
 
 
@@ -1146,7 +1153,7 @@ start_vm_after_failure="1"
 
           echo "Backing up $vdisk to main server"
 
-          rsync -av$rsync_dry_run_option $vdisk root@cs:/mnt/user/Backup_for_campus_comps/VMStore/QEMU
+          rsync -avz$rsync_dry_run_option $vdisk root@cs:/mnt/user/Backup_for_campus_comps/VMStore/QEMU
 
           done
 
