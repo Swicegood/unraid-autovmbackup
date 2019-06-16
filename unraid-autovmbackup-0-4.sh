@@ -1029,6 +1029,19 @@ start_vm_after_failure="1"
 
 					fi
 
+                    if [ "$vm_beginning_state" == "running" ]; then
+
+                        echo "Adding $backup_location/$vm/$timestamp$new_disk to list of files to transfer to server"
+
+                        ARRAY_OF_VDISKS+=("/$vm/$timestamp$new_disk")
+
+                    else
+
+                        echo "Adding $disk to list of files to transfer to server"
+
+                        ARRAY_OF_VDISKS+=("$disk")
+
+                    fi
 				fi
 
 			done
@@ -1081,27 +1094,15 @@ start_vm_after_failure="1"
                 fi
 
 
+            else
+
+
 
 
 			fi
 
 
-			else
 
-
-			if [ "$vm_beginning_state" == "running" ]; then
-
-                 echo "Adding $backup_location/$vm/$timestamp$new_disk to list of files to transfer to server"
-
-                  ARRAY_OF_VDISKS+=("/$vm/$timestamp$new_disk")
-
-            else
-
-                 echo "Adding $disk to list of files to transfer to server"
-
-                 ARRAY_OF_VDISKS+=("$disk")
-
-            fi
 
 
 
