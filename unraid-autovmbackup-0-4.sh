@@ -995,12 +995,9 @@ start_vm_after_failure="1"
 
 
 
-                        if test `find "${disk/user/cache}" -mtime +30`
-                          then
+                        if test `find "${disk/user/cache}" -mtime +30`; then
 
-                            echo "$disk old enough"
-
-                            echo "Moving $disk to ${disk/user/disk1}"
+                            echo "$disk old enough. Moving $disk to ${disk/user/disk1}"
 
                             # move vdisk to array if it has not been used in a month
 
@@ -1149,7 +1146,7 @@ start_vm_after_failure="1"
 
           echo "Backing up $vdisk to main server"
 
-          rsync -av$rsync_dry_run_option --remove-source-files $vdisk root@cs:/mnt/user/Backup_for_campus_comps/VMStore/QEMU
+          rsync -av$rsync_dry_run_option $vdisk root@cs:/mnt/user/Backup_for_campus_comps/VMStore/QEMU
 
           done
 
