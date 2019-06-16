@@ -998,20 +998,44 @@ start_vm_after_failure="1"
 					# copy or pretend to copy the vdisk to the backup location specified by the user.
 
 
-			        	rsync -av$rsync_dry_run_option "$disk" "$backup_location/$vm/$timestamp$new_disk"
+			        rsync -av$rsync_dry_run_option "$disk" "$backup_location/$vm/$timestamp$new_disk"
 
 
 
-                        if test `find "${disk/user/cache}" -mtime +30`; then
+                     if test `find "${disk/user/cache}" -mtime +30`; then
 
                             echo "$disk old enough. Moving $disk to ${disk/user/disk1}"
 
                             # move vdisk to array if it has not been used in a month
 
+
+                            if [ ! -d  "$(dirname "${disk/user/disk1}")" ] ; then
+
+
+			                        echo "action: backup_location/$vm does not exist. creating it."
+
+
+			                        # make the directory as it doesnt exist. added -v option to give a confirmation message to command line.
+
+
+			                         mkdir -vp "$(dirname "${disk/user/disk1}")"
+
+
+		                    else
+
+
+			                    echo "information: $backup_location/$vm exists. continuing."
+
+
+		                    fi
+
+
+
+
                             rsync -av$rsync_dry_run_option --remove-source-files "$disk" "${disk/user/disk1}"
 
 
-                        fi
+                      fi
 
 
 
@@ -1149,13 +1173,16 @@ start_vm_after_failure="1"
 
           for vdisk  in "${ARRAY_OF_VDISKS[@]}"
 
-          do
+             do
 
-          echo "Backing up $vdisk to main server"
+                   fname="${vdisk/user/user\/.\/}"
+                   sname="${fname/\/disk1/\/disk1\/.\/}"
 
-          rsync -avz$rsync_dry_run_option $vdisk root@cs:/mnt/user/Backup_for_campus_comps/VMStore/QEMU
+                   echo "Backing up $vdisk to main server"
 
-          done
+                   rsync -avzR$rsync_dry_run_option $sname root@cs:/mnt/user/Backup_for_campus_comps/VMStore/QEMU/
+
+             done
 
 	exit 0
 
