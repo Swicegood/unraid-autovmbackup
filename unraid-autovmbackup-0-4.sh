@@ -153,7 +153,7 @@ Freepbx
 
 # default is 0 but set this to 1 if you would like to actually copy and backup files.
 
-actually_copy_files="0"
+actually_copy_files="1"
 
 
 # default is 0 but set this to 1 if you would like to add a timestamp to the backed up files.
@@ -163,7 +163,7 @@ timestamp_files="0"
 
 # default is 10. set this to the number of times you would like to check if a clean shutdown of a vm has been successfull.
 
-clean_shutdown_checks="10"
+clean_shutdown_checks="5"
 
 
 # default is 60. set this to the number of seconds to wait in between checks to see if a clean shutdown has been successfull.
