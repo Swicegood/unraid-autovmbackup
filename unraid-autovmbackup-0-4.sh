@@ -148,6 +148,7 @@ pfSense
 Libre Elec Custom
 FreeNAS
 Freepbx
+Mojave
 "
 
 
@@ -1175,14 +1176,17 @@ start_vm_after_failure="1"
 
              do
 
-                   fname="${vdisk/user/user\/.\/}"
-                   sname="${fname/\/disk1/\/disk1\/.\/}"
-
                    echo "Backing up $vdisk to main server"
 
-                   rsync -avzR$rsync_dry_run_option $sname root@cs:/mnt/user/Backup_for_campus_comps/VMStore/QEMU/
-
              done
+
+              echo "Updating changed vitrual disks to cs"
+
+        rsync -avzR$rsync_dry_run_option --existing --inplace  $backup_location/./ root@cs:/mnt/user/Backup_for_campus_comps/VMStore/QEMU/domains
+
+             echo "Adding new virutal disks to cs"
+
+rsync -avzR$rsync_dry_run_option --ignore-existing --sparse  $backup_location/./ root@cs:/mnt/user/Backup_for_campus_comps/VMStore/QEMU/domains
 
 	exit 0
 
